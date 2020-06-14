@@ -10,7 +10,8 @@ const App = () => {
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [errorMessage, setErrorMessage] = useState(null)
+  const [message, setMessage] = useState(null)
+  const [messageClass, setMessageClass] = useState('')
   const [user, setUser] = useState(null)
   
   // Blog Form
@@ -44,10 +45,12 @@ const App = () => {
     const returnedBlog = await blogService
       .create(blogObject)
     
-      setBlogs(blogs.concat(returnedBlog))
-      setTitle('')
-      setAuthor('')
-      setUrl('')
+    setBlogs(blogs.concat(returnedBlog))
+    setTitle('')
+    setAuthor('')
+    setUrl('')
+    
+    showNotification(`Added blog "${blogObject.title}" to the db.`, 'success')
   }
 
   const handleLogin = async (event) => {
@@ -66,17 +69,26 @@ const App = () => {
       setUser(user)
       setUsername('')
       setPassword('')
+      showNotification('Successfully logged in!', 'success')
     } catch (exception) {
-      setErrorMessage('Wrong Credentials')
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
+      showNotification('Wrong Username or Password', 'error')
     }
   }
 
   const handleLogout = () => {
     setUser(null)
     window.localStorage.removeItem('loggedInBlogappUser')
+    showNotification('Sucessfully logged out.', 'success')
+  }
+
+  const showNotification = (messageContent, classSetting) => {
+    setMessageClass(classSetting)
+    setMessage(
+      messageContent
+    )
+    setTimeout(() => {
+      setMessage(null)
+    }, 5000)
   }
 
   const handleUsernameChange = (event) => { setUsername(event.target.value) }
@@ -90,7 +102,7 @@ const App = () => {
   return (
     <div>
       <h2>blogs</h2>
-      <Notification message={errorMessage} />
+      <Notification message={message} messageClass={messageClass} />
       {user === null ?
         <LoginForm 
           onSubmit={handleLogin}
