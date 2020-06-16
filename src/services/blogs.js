@@ -22,7 +22,7 @@ const create = async newObject => {
 }
 
 const like = async blog => {
-  
+
   const response = await axios.put(baseUrl + `/${blog.id}`, blog)
   return response.data
 }

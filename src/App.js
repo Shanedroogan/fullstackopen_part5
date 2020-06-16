@@ -12,14 +12,14 @@ const App = () => {
   const [message, setMessage] = useState(null)
   const [messageClass, setMessageClass] = useState('')
   const [user, setUser] = useState(null)
-  
+
   // Blog Form
   const blogFormRef = React.createRef()
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs( blogs.sort((a,b) => b.likes - a.likes) )
-    )  
+    )
   }, [])
 
   useEffect(() => {
@@ -40,7 +40,7 @@ const App = () => {
 
   const likeBlog = async (id) => {
     const blog = blogs.find(blog => blog.id === id)
-    const updatedBlog = {...blog, user: blog.user.id, likes: blog.likes + 1}
+    const updatedBlog = { ...blog, user: blog.user.id, likes: blog.likes + 1 }
 
     const returnedBlog = await blogService.like(updatedBlog)
     returnedBlog.user = blog.user
@@ -94,7 +94,7 @@ const App = () => {
 
   const loginForm = () => (
     <Togglable buttonLabel='login'>
-      <LoginForm 
+      <LoginForm
         loginUser={handleLogin}
       />
     </Togglable>
@@ -102,7 +102,7 @@ const App = () => {
 
   const blogForm = () => (
     <Togglable buttonLabel='create blog' ref={blogFormRef}>
-      <BlogForm 
+      <BlogForm
         createBlog={addBlog}
       />
     </Togglable>
@@ -123,9 +123,9 @@ const App = () => {
         </div>
       }
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} user={user} 
+        <Blog key={blog.id} blog={blog} user={user}
           likeBlog={() => likeBlog(blog.id)}
-          deleteBlog={() => deleteBlog(blog.id)} 
+          deleteBlog={() => deleteBlog(blog.id)}
         />
       )}
     </div>
