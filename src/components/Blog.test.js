@@ -59,3 +59,31 @@ test('clicking the show button shows likes and url', () => {
     'likes'
   )
 })
+
+test('clicking the show button shows likes and url', () => {
+  const user = {
+    token: 'a', name: 'Shane', username: 'Shane'
+  }
+  const blog = {
+    title: 'Shane Dorg\'s Great Escape',
+    author: 'Syd Legge',
+    url: 'www.url.com',
+    user: user
+  }
+
+  const mockHandler = jest.fn()
+
+  const component = render(
+    <Blog blog={blog} user={user} likeBlog={mockHandler} />
+  )
+
+  const showButton = component.getByText('show')
+  fireEvent.click(showButton)
+
+  const likeButton = component.getByText('like')
+  fireEvent.click(likeButton)
+  fireEvent.click(likeButton)
+
+  expect(mockHandler.mock.calls).toHaveLength(2)
+
+})
