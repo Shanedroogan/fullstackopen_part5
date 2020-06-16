@@ -18,7 +18,7 @@ const App = () => {
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
-      setBlogs( blogs )
+      setBlogs( blogs.sort((a,b) => b.likes - a.likes) )
     )  
   }, [])
 
@@ -45,7 +45,7 @@ const App = () => {
     const returnedBlog = await blogService.like(updatedBlog)
     returnedBlog.user = blog.user
 
-    setBlogs(blogs.map(blog => blog.id !== id ? blog : returnedBlog))
+    setBlogs(blogs.map(blog => blog.id !== id ? blog : returnedBlog).sort((a,b) => b.likes - a.likes))
   }
 
   const handleLogin = async ({ username, password }) => {
