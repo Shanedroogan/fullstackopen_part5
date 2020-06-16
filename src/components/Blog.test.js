@@ -85,5 +85,4 @@ test('clicking the show button shows likes and url', () => {
   fireEvent.click(likeButton)
 
   expect(mockHandler.mock.calls).toHaveLength(2)
-
 })
