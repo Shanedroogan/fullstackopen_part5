@@ -15,7 +15,7 @@ const Blog = ({ blog, user, likeBlog, deleteBlog }) => {
   }
 
   return (
-    <div style={blogStyle}>
+    <div style={blogStyle} className='blog'>
       {show === false ?
         <div>
           {blog.title} {blog.author}
