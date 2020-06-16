@@ -19,11 +19,11 @@ const Blog = ({ blog, user, likeBlog, deleteBlog }) => {
       {show === false ?
         <div>
           {blog.title} {blog.author}
-          <button onClick={showDetails}>show</button>
+          <button onClick={showDetails} className='showDetails'>show</button>
         </div> :
         <div>
           {blog.title} {blog.author}
-          <button onClick={showDetails}>hide</button>
+          <button onClick={showDetails} className='hideDetails'>hide</button>
           <p>{blog.url}</p>
           <p>likes {blog.likes} <button onClick={likeBlog} type='submit'>like</button></p>
           <p>{blog.user.name}</p>

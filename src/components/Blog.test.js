@@ -1,6 +1,7 @@
 import React from 'react'
 import '@testing-library/jest-dom/extend-expect'
-import { render } from '@testing-library/react'
+import { render, fireEvent } from '@testing-library/react'
+import { prettyDOM } from "@testing-library/dom"
 import Blog from './Blog'
 
 test('renders title and author, but not url and likes by default', () => {
@@ -30,5 +31,31 @@ test('renders title and author, but not url and likes by default', () => {
   expect(component.container).not.toHaveTextContent(
     'likes'
   )
+})
 
+test('clicking the show button shows likes and url', () => {
+  const user = {
+    token: 'a', name: 'Shane', username: 'Shane'
+  }
+  const blog = {
+    title: 'Shane Dorg\'s Great Escape',
+    author: 'Syd Legge',
+    url: 'www.url.com',
+    user: user
+  }
+
+  const component = render(
+    <Blog blog={blog} user={user} />
+  )
+
+  const button = component.getByText('show')
+  fireEvent.click(button)
+
+  expect(component.container).toHaveTextContent(
+    blog.url
+  )
+
+  expect(component.container).toHaveTextContent(
+    'likes'
+  )
 })
