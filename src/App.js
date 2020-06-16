@@ -48,6 +48,16 @@ const App = () => {
     setBlogs(blogs.map(blog => blog.id !== id ? blog : returnedBlog).sort((a,b) => b.likes - a.likes))
   }
 
+  const deleteBlog = async(id) => {
+    const blog = blogs.find(blog => blog.id === id)
+    if (!window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
+      return null
+    }
+
+    await blogService.deleteBlog(blog)
+    setBlogs(blogs.filter(blog => blog.id !== id))
+  }
+
   const handleLogin = async ({ username, password }) => {
     try {
       const user = await loginService.login({
@@ -113,7 +123,10 @@ const App = () => {
         </div>
       }
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} likeBlog={() => likeBlog(blog.id)} />
+        <Blog key={blog.id} blog={blog} user={user} 
+          likeBlog={() => likeBlog(blog.id)}
+          deleteBlog={() => deleteBlog(blog.id)} 
+        />
       )}
     </div>
   )
