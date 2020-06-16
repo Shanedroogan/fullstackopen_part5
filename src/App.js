@@ -38,6 +38,16 @@ const App = () => {
     showNotification(`Added blog "${blogObject.title}" to the db.`, 'success')
   }
 
+  const likeBlog = async (id) => {
+    const blog = blogs.find(blog => blog.id === id)
+    const updatedBlog = {...blog, user: blog.user.id, likes: blog.likes + 1}
+
+    const returnedBlog = await blogService.like(updatedBlog)
+    returnedBlog.user = blog.user
+
+    setBlogs(blogs.map(blog => blog.id !== id ? blog : returnedBlog))
+  }
+
   const handleLogin = async ({ username, password }) => {
     try {
       const user = await loginService.login({
@@ -103,7 +113,7 @@ const App = () => {
         </div>
       }
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog} likeBlog={() => likeBlog(blog.id)} />
       )}
     </div>
   )

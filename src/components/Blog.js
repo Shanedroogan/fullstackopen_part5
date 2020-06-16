@@ -1,11 +1,12 @@
 import React, { useState } from 'react'
-const Blog = ({ blog }) => {
+
+const Blog = ({ blog, likeBlog }) => {
   const [show, setShow] = useState(false)
-  const [numLikes, setLikes] = useState(0)
   const blogStyle = {
     borderStyle: 'solid',
     borderRadius: 4,
     padding: 5,
+    margin: 1,
     width: 500
   }
 
@@ -24,8 +25,8 @@ const Blog = ({ blog }) => {
         {blog.title} {blog.author} 
         <button onClick={showDetails}>hide</button>
         <p>{blog.url}</p>
-        <p>likes {numLikes} <button>like</button></p>
-        <p>{blog.user}</p>
+        <p>likes {blog.likes} <button onClick={likeBlog} type='submit'>like</button></p>
+        <p>{blog.user.name}</p>
       </div>}
     </div>
   )
