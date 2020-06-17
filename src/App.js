@@ -34,6 +34,7 @@ const App = () => {
   const addBlog = async (blogObject) => {
     blogFormRef.current.toggleVisibility()
     const returnedBlog = await blogService.create(blogObject)
+    returnedBlog.user = user
     setBlogs(blogs.concat(returnedBlog))
     showNotification(`Added blog "${blogObject.title}" to the db.`, 'success')
   }
