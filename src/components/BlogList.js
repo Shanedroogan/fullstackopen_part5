@@ -8,12 +8,12 @@ const BlogList = (props) => {
   const dispatch = useDispatch()
   const blogs = useSelector(state => state.blogs.sort((a,b) => b.likes - a.likes))
 
-  const likeBlog = async (blog) => {
+  const likeBlog = (blog) => {
     dispatch(like(blog))
     dispatch(notify(`You voted for ${blog.title}`, 5))
   }
 
-  const deleteBlog = async (blog) => {
+  const deleteBlog = (blog) => {
     if (!window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
       return null
     }

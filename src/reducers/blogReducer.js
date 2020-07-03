@@ -46,7 +46,7 @@ export const createBlog = (content, user) => {
 export const like = (blog) => {
   const blogToSend = {...blog, user: blog.user.id}
   return async dispatch => {
-    await blogService.like(blogToSend)
+    blogService.like(blogToSend)
     dispatch({
       type: 'LIKE',
       data: blog.id
