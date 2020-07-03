@@ -1,26 +1,31 @@
 import React, { useState, useEffect } from 'react'
-import Blog from './components/Blog'
+import { useDispatch } from 'react-redux'
 import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
 import Notification from './components/Notification'
+import BlogList from './components/BlogList'
 import Togglable from './components/Togglable'
+import { initializeBlogs, createBlog } from './reducers/blogReducer'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import { notify } from './reducers/notificationReducer'
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
-  const [message, setMessage] = useState(null)
-  const [messageClass, setMessageClass] = useState('')
+  const dispatch = useDispatch()
+  useEffect(() => {
+    dispatch(initializeBlogs())
+  }, [dispatch])
+
   const [user, setUser] = useState(null)
 
   // Blog Form
   const blogFormRef = React.createRef()
 
-  useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs( blogs.sort((a,b) => b.likes - a.likes) )
-    )
-  }, [])
+  // useEffect(() => {
+  //   blogService.getAll().then(blogs =>
+  //     setBlogs( blogs.sort((a,b) => b.likes - a.likes) )
+  //   )
+  // }, [])
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedInBlogappUser')
@@ -33,31 +38,13 @@ const App = () => {
 
   const addBlog = async (blogObject) => {
     blogFormRef.current.toggleVisibility()
-    const returnedBlog = await blogService.create(blogObject)
-    returnedBlog.user = user
-    setBlogs(blogs.concat(returnedBlog))
-    showNotification(`Added blog "${blogObject.title}" to the db.`, 'success')
+    dispatch(createBlog(blogObject, user))
+    
+    // setBlogs(blogs.concat(returnedBlog))
+    /// NOTIFICATION
+    dispatch(notify(`Added blog "${blogObject.title}" to the db.`, 5))
   }
 
-  const likeBlog = async (id) => {
-    const blog = blogs.find(blog => blog.id === id)
-    const updatedBlog = { ...blog, user: blog.user.id, likes: blog.likes + 1 }
-
-    const returnedBlog = await blogService.like(updatedBlog)
-    returnedBlog.user = blog.user
-
-    setBlogs(blogs.map(blog => blog.id !== id ? blog : returnedBlog).sort((a,b) => b.likes - a.likes))
-  }
-
-  const deleteBlog = async(id) => {
-    const blog = blogs.find(blog => blog.id === id)
-    if (!window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
-      return null
-    }
-
-    await blogService.deleteBlog(blog)
-    setBlogs(blogs.filter(blog => blog.id !== id))
-  }
 
   const handleLogin = async ({ username, password }) => {
     try {
@@ -71,27 +58,19 @@ const App = () => {
 
       blogService.setToken(user.token)
       setUser(user)
-      showNotification('Successfully logged in!', 'success')
+      
+      dispatch(notify('Successfully logged in!', 5))
     } catch (exception) {
-      showNotification('Wrong Username or Password', 'error')
+      dispatch(notify('Wrong Username or Password', 5))
     }
   }
 
   const handleLogout = () => {
     setUser(null)
     window.localStorage.removeItem('loggedInBlogappUser')
-    showNotification('Sucessfully logged out.', 'success')
+    dispatch(notify('Sucessfully logged out.', 5))
   }
 
-  const showNotification = (messageContent, classSetting) => {
-    setMessageClass(classSetting)
-    setMessage(
-      messageContent
-    )
-    setTimeout(() => {
-      setMessage(null)
-    }, 5000)
-  }
 
   const loginForm = () => (
     <Togglable buttonLabel='login'>
@@ -112,7 +91,7 @@ const App = () => {
   return (
     <div>
       <h2>blogs</h2>
-      <Notification message={message} messageClass={messageClass} />
+      <Notification />
       {user === null ?
         loginForm() :
         <div>
@@ -123,12 +102,7 @@ const App = () => {
           {blogForm()}
         </div>
       }
-      {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} user={user}
-          likeBlog={() => likeBlog(blog.id)}
-          deleteBlog={() => deleteBlog(blog.id)}
-        />
-      )}
+      <BlogList user={user}/>
     </div>
   )
 }
