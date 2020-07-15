@@ -4,10 +4,19 @@ import LoginForm from "./components/LoginForm"
 import BlogForm from "./components/BlogForm"
 import Notification from "./components/Notification"
 import BlogList from "./components/BlogList"
+import UserList from './components/UserList'
 import Togglable from "./components/Togglable"
 import { initializeBlogs, createBlog } from "./reducers/blogReducer"
 import { logInUser, logOutUser, retrieveSession } from './reducers/userReducer'
 import { notify } from "./reducers/notificationReducer"
+import {
+  Switch,
+  Route,
+  Link,
+  Redirect,
+  useHistory,
+  useRouteMatch
+} from "react-router-dom"
 
 const App = () => {
   const dispatch = useDispatch()
@@ -59,22 +68,44 @@ const App = () => {
     </Togglable>
   )
 
+  const padding = {
+    padding: 5
+  }
+
   return (
     <div>
-      <h2>blogs</h2>
+      <h1>blogs</h1>
+      <div>
+        <Link style={padding} to='/'>home</Link>
+        <Link style={padding} to='/blogs'>blogs</Link>
+        <Link style={padding} to='users'>users</Link>
+        {user
+          ? <em>{user.name} logged in</em>
+          : <Link style={padding} to="/login"></Link>
+        }
+      </div>
       <Notification />
       {user === null ? (
         loginForm()
       ) : (
         <div>
-          <h2>create new</h2>
-          <p>{user.name} logged in.</p>
           <button onClick={handleLogout}>logout</button>
-
-          {blogForm()}
         </div>
       )}
-      <BlogList user={user} />
+      <Switch>
+        <Route path="/blogs">
+          {user === null ? <div></div>: (
+            <div>
+              <h2>create new</h2>
+              {blogForm()}
+            </div>
+          )}
+          <BlogList user={user} />
+        </Route>
+        <Route>
+          <UserList />
+        </Route>
+      </Switch>
     </div>
   )
 }
